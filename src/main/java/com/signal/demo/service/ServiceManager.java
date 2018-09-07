@@ -1,5 +1,6 @@
 package com.signal.demo.service;
 
+import com.signal.demo.common.SignalInstance;
 import com.signal.demo.sip.SipSignal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,21 +20,24 @@ public class ServiceManager implements Serializable {
     }
 
     public void loop() {
+        logger.debug("Service Start");
         this.startService();
 
         Runtime.getRuntime().addShutdownHook( new Thread( () -> {
-            logger.debug("Service Stop");
             this.stopService();
         }));
-
     }
 
     private void startService() {
+        logger.debug("SipSignal GetInstance");
+        sipSignal = SipSignal.getInstance();
+
         sipSignal.init();
     }
 
     private void stopService() {
-
+        logger.debug("SipSignal Stop");
+        sipSignal.processStop();
     }
 
 }
