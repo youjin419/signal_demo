@@ -1,33 +1,56 @@
 package com.signal.demo.common;
 
 import com.signal.demo.sip.SipSignal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import javax.sip.SipProvider;
+import javax.sip.SipStack;
 
 public class SignalInstance {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-    private SignalInstance instance;
-    private SipSignal signal;
+    private static SignalInstance signalInstance = null;
+    private SipSignal sipSignal;
+    private SipStack sipStack;
+    private SipProvider sipProvider;
+    private String sdpParser;
 
-    public SignalInstance getInstance() {
-        if (instance == null) {
-            instance = new SignalInstance();
-        }
-        return instance;
+
+    public static SignalInstance getSignalInstance() {
+        if (signalInstance == null) signalInstance = new SignalInstance();
+
+        return signalInstance;
     }
 
-    public void setInstance(SignalInstance signalInstance) {
-        this.instance = signalInstance;
+    public SipSignal getSignal() {
+        return sipSignal;
     }
 
-    public SipSignal getSipSignal() {
-        return signal;
+    public void setSignal(SipSignal sipSignal) {
+        this.sipSignal = sipSignal;
     }
 
-    public void setSipSignal(SipSignal sipSignal) {
-        this.signal = sipSignal;
+    public SipStack getSipStack() {
+        return sipStack;
     }
 
+    public void setSipStack(SipStack sipStack) {
+        this.sipStack = sipStack;
+    }
+
+    public SipProvider getSipProvider() {
+        return sipProvider;
+    }
+
+    public void setSipProvider(SipProvider sipProvider) {
+        this.sipProvider = sipProvider;
+    }
+
+
+    public String getSdpParser() {
+        return sdpParser;
+    }
+
+    public void setSdpParser(String parser) {
+        this.sdpParser = parser;
+    }
 
 
 }

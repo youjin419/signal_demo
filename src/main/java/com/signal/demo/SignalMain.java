@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SignalMain {
-    // TODO: 공통 Logger 생성
     private static Logger logger = LoggerFactory.getLogger(SignalMain.class);
 
     // TODO: Signal 생성

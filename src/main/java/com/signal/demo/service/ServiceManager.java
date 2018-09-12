@@ -1,14 +1,12 @@
 package com.signal.demo.service;
 
 import com.signal.demo.common.SignalInstance;
+import com.signal.demo.common.log.SipLogger;
 import com.signal.demo.sip.SipSignal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
-public class ServiceManager implements Serializable {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+public class ServiceManager extends SipLogger implements Serializable {
     private static ServiceManager serviceManager;
     private static SipSignal sipSignal;
 
@@ -29,10 +27,11 @@ public class ServiceManager implements Serializable {
     }
 
     private void startService() {
-        logger.debug("SipSignal GetInstance");
+        SignalInstance signalInstance = SignalInstance.getSignalInstance();
         sipSignal = SipSignal.getInstance();
-
+        signalInstance.setSignal(sipSignal);
         sipSignal.init();
+        logger.debug("SipSignal {} // Class {}" , sipSignal, this.getClass());
     }
 
     private void stopService() {
