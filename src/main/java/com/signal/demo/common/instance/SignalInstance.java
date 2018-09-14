@@ -1,4 +1,4 @@
-package com.signal.demo.common;
+package com.signal.demo.common.instance;
 
 import com.signal.demo.sip.SipSignal;
 

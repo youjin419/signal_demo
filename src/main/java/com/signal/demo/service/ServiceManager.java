@@ -1,6 +1,6 @@
 package com.signal.demo.service;
 
-import com.signal.demo.common.SignalInstance;
+import com.signal.demo.common.instance.SignalInstance;
 import com.signal.demo.common.log.SipLogger;
 import com.signal.demo.sip.SipSignal;
 
@@ -31,6 +31,8 @@ public class ServiceManager extends SipLogger implements Serializable {
         sipSignal = SipSignal.getInstance();
         signalInstance.setSignal(sipSignal);
         sipSignal.init();
+        //SessionManager sessionManager = new SessionManager();
+
         logger.debug("SipSignal {} // Class {}" , sipSignal, this.getClass());
     }
 
