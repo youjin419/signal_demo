@@ -2,35 +2,32 @@ package com.signal.demo.common.instance;
 
 import com.signal.demo.sip.SipSignal;
 
-import javax.sip.InvalidArgumentException;
 import javax.sip.ServerTransaction;
-import javax.sip.SipProvider;
 import javax.sip.address.Address;
 import javax.sip.address.AddressFactory;
 import javax.sip.address.SipURI;
 import javax.sip.header.*;
-import java.text.ParseException;
 import java.util.ArrayList;
 
 public class ProcessingInstance {
     private static ProcessingInstance processingInstance = null;
-    private String fromTags;
-    private ServerTransaction st;
-
-    private int toIp;
-    private int fromIp;
-    private int toPort;
-    private int fromPort;
-    private String toUser;
-    private String fromUser;
-
-    // TODO: 다시 정리 필요
-    private SipSignal sipSignal;
-    private SipProvider sipProvider;
-    private ContactHeader contactHeader;
     private AddressFactory addressFactory;
     private HeaderFactory headerFactory;
 
+    private String toip;
+    private String fromip;
+    private ServerTransaction serverTransaction;
+    private int toPort;
+    private int fromPort;
+    private String toTags;
+    private String fromTags;
+    private String toUser;
+    private String fromUser;
+    private String sdp;
+    private long seq;
+
+    private CallIdHeader callIdHeader;
+    private SipSignal sipSignal = SipSignal.getInstance();
 
 
     public static ProcessingInstance getProcessingInstance() {
@@ -39,45 +36,44 @@ public class ProcessingInstance {
         return processingInstance;
     }
 
-    public AddressFactory getAddressFactory() {
-        return addressFactory;
+    public String getToip() {
+        return toip;
     }
 
-    public void setAddressFactory(AddressFactory addressFactory) {
-        this.addressFactory = addressFactory;
+    public void setToip(String toip) {
+        this.toip = toip;
     }
 
-    public HeaderFactory getHeaderFactory() {
-        return headerFactory;
+    public String getFromip() {
+        return fromip;
     }
 
-    public void setHeaderFactory(HeaderFactory headerFactory) {
-        this.headerFactory = headerFactory;
+    public void setFromip(String fromip) {
+        this.fromip = fromip;
     }
 
-    public ServerTransaction getSt() {
-        return st;
+    public ServerTransaction getServerTransaction() {
+        return serverTransaction;
     }
 
-    public void setSt(ServerTransaction st) {
-        this.st = st;
+    public void setServerTransaction(ServerTransaction serverTransaction) {
+        this.serverTransaction = serverTransaction;
     }
-
 
     public int getToPort() {
         return toPort;
-    }
-
-    public void setToPort(int toPort) {
-        this.toPort = toPort;
     }
 
     public int getFromPort() {
         return fromPort;
     }
 
-    public void setFromPort(int fromPort) {
-        this.fromPort = fromPort;
+    public String getToTags() {
+        return toTags;
+    }
+
+    public void setToTags(String toTags) {
+        this.toTags = toTags;
     }
 
     public String getFromTags() {
@@ -88,9 +84,76 @@ public class ProcessingInstance {
         this.fromTags = fromTags;
     }
 
-    public SipURI createSipUri(String user, String host) throws Exception {
-        SipURI sipURI = this.addressFactory.createSipURI(user,host);
-        return sipURI;
+    public String getToUser() {
+        return toUser;
+    }
+
+    public void setToUser(String toUser) {
+        this.toUser = toUser;
+    }
+
+    public String getFromUser() {
+        return fromUser;
+    }
+
+    public void setFromUser(String fromUser) {
+        this.fromUser = fromUser;
+    }
+
+    public String getSdp() {
+        return sdp;
+    }
+
+    public void setSdp(String sdp) {
+        this.sdp = sdp;
+    }
+
+    public long getSeq() {
+        return seq;
+    }
+
+    public void setSeq(long seq) {
+        this.seq = seq;
+    }
+
+
+    public CallIdHeader getCallIdHeader() {
+        return callIdHeader;
+    }
+
+    public void setCallIdHeader(CallIdHeader callIdHeader) {
+        this.callIdHeader = callIdHeader;
+    }
+
+    public void setAddressFactory(AddressFactory addressFactory) {
+        this.addressFactory = addressFactory;
+    }
+
+    public void setHeaderFactory(HeaderFactory headerFactory) {
+        this.headerFactory = headerFactory;
+    }
+
+    public void setToPort(int toPort) {
+        this.toPort = toPort;
+    }
+
+    public void setFromPort(int fromPort) {
+        this.fromPort = fromPort;
+    }
+
+    public ContactHeader createContactHeader(String user, String ip, Integer port) throws Exception {
+
+        SipURI contactURI = this.addressFactory.createSipURI(user, ip);
+        contactURI.setPort(port);
+        Address contactAddress = this.addressFactory.createAddress(contactURI);
+
+        contactAddress.setDisplayName(user);
+        return this.headerFactory.createContactHeader(contactAddress);
+    }
+
+    public SipURI createSipUri(String ip, Integer port, String user) throws Exception {
+        String host = ip + ":" + port;
+        return this.addressFactory.createSipURI(user,host);
     }
 
     public ToHeader createToHeader(SipURI sipURI, String tags) throws Exception {
@@ -110,16 +173,20 @@ public class ProcessingInstance {
         return cSeqHeader;
     }
 
-    public ContactHeader createContactHeader(SipURI sipURI) {
-        Address address = this.addressFactory.createAddress(sipURI);
-        ContactHeader contactHeader = this.headerFactory.createContactHeader();
-        return contactHeader;
-    }
-
     public MaxForwardsHeader createMaxForwardsHeader() throws Exception {
         MaxForwardsHeader maxForwardsHeader = this.headerFactory.createMaxForwardsHeader(70);
         return maxForwardsHeader;
     }
+
+    public ArrayList createViaHeaders() throws Exception {
+        ArrayList viaHeaders = new ArrayList();
+        String address = this.sipSignal.getSipProvider().getListeningPoint().getIPAddress();
+        ViaHeader viaHeader = this.headerFactory.createViaHeader(address, this.sipSignal.getSipProvider().getListeningPoint("udp").getPort(), "udp", null);
+        viaHeaders.add(viaHeader);
+
+        return viaHeaders;
+    }
+
 
 
 }
